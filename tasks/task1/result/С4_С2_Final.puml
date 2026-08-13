@@ -1,0 +1,58 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' ---- Внешний пользователь ----
+Person(user, "Пользователь", "Взаимодействует через фронтенд")
+
+' ---- API Gateway ----
+Container(gateway, "API Gateway", "Kong", "Единая точка входа, обратный прокси, маршрутизация, балансировка, аутентификация, логирование")
+
+' ---- Микросервисы ----
+System_Boundary(ms, "Микросервисы") {
+
+    Container(bookingApp, "Booking Service", "Spring Boot", "Управляет бронированиями")
+    ContainerDb(bookingDb, "Booking DB", "PostgreSQL", "Хранит бронирования")
+
+    Container(hotelApp, "Hotel Service", "Spring Boot", "Управляет отелями")
+    ContainerDb(hotelDb, "Hotel DB", "PostgreSQL", "Хранит отели")
+
+    Container(userApp, "User Service", "Spring Boot", "Управляет пользователями")
+    ContainerDb(userDb, "User DB", "PostgreSQL", "Хранит пользователей")
+
+    Container(reviewApp, "Review Service", "Spring Boot", "Управляет отзывами")
+    ContainerDb(reviewDb, "Review DB", "PostgreSQL", "Хранит отзывы")
+
+    Container(promoApp, "PromoCode Service", "Spring Boot", "Управляет промокодами")
+    ContainerDb(promoDb, "PromoCode DB", "PostgreSQL", "Хранит промокоды")
+}
+
+' ---- Пользователь → Gateway ----
+Rel(user, gateway, "Использует", "HTTPS")
+
+' ---- Gateway → Сервисы (внешние маршруты) ----
+Rel(gateway, bookingApp, "Маршрутизирует", "/api/bookings")
+Rel(gateway, hotelApp,   "Маршрутизирует", "/api/hotels")
+Rel(gateway, userApp,    "Маршрутизирует", "/api/users")
+Rel(gateway, reviewApp,  "Маршрутизирует", "/api/reviews")
+Rel(gateway, promoApp,   "Маршрутизирует", "/api/promos")
+
+' ---- Внутренние вызовы между сервисами через Gateway (обратный прокси) ----
+' Booking Service вызывает другие сервисы через Gateway
+Rel(bookingApp, gateway, "Вызывает (REST)", "GET /api/hotels/{id}/operational, /fully-booked")
+Rel(bookingApp, gateway, "Вызывает (REST)", "GET /api/users/{id}/active, /blacklisted, /status")
+Rel(bookingApp, gateway, "Вызывает (REST)", "GET /api/reviews/hotel/{id}/trusted")
+Rel(bookingApp, gateway, "Вызывает (REST)", "POST /api/promos/validate")
+
+' PromoCode Service вызывает User Service через Gateway
+Rel(promoApp, gateway, "Вызывает (REST)", "GET /api/users/{id}/vip")
+
+' Gateway перенаправляет эти вызовы соответствующим сервисам (это подразумевается, но для наглядности можно показать, но не обязательно)
+
+' ---- Доступ к базам данных ----
+Rel(bookingApp, bookingDb, "Читает/пишет", "Бронирования")
+Rel(hotelApp,   hotelDb,   "Читает/пишет", "Отели")
+Rel(userApp,    userDb,    "Читает/пишет", "Пользователи")
+Rel(reviewApp,  reviewDb,  "Читает/пишет", "Отзывы")
+Rel(promoApp,   promoDb,   "Читает/пишет", "Промокоды")
+
+@enduml

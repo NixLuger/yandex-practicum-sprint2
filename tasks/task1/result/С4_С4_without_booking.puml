@@ -1,0 +1,135 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' Граница всего монолита (без BookingService)
+System_Boundary(monolith, "Монолитное приложение (hotelio-monolith) без сервиса Booking") {
+
+    ' ========== КОНТРОЛЛЕРЫ ==========
+    package "ReviewController" <<Controller>> {
+        component "getReviewsForHotel()" as RC_get
+        component "isHotelTrusted()" as RC_trusted
+    }
+
+    package "PromoCodeController" <<Controller>> {
+        component "getPromoByCode()" as PC_get
+        component "isPromoValid()" as PC_valid
+        component "validatePromo()" as PC_validate
+    }
+
+    package "HotelController" <<Controller>> {
+        component "getHotelById()" as HC_get
+        component "isOperational()" as HC_oper
+        component "isFullyBooked()" as HC_fully
+        component "findByCity()" as HC_city
+        component "topRatedInCity()" as HC_top
+    }
+
+    package "AppUserController" <<Controller>> {
+        component "getUserById()" as UC_get
+        component "getUserStatus()" as UC_status
+        component "isUserBlacklisted()" as UC_black
+        component "isUserActive()" as UC_active
+        component "isUserAuthorized()" as UC_auth
+        component "isUserVip()" as UC_vip
+    }
+
+    ' ========== СЕРВИСЫ ==========
+    package "ReviewService" <<Service>> {
+        component "isTrustedHotel()" as RS_trusted
+    }
+
+    package "PromoCodeService" <<Service>> {
+        component "findByCode()" as PS_find
+        component "isPromoValid()" as PS_valid
+        component "validate()" as PS_validate
+    }
+
+    package "HotelService" <<Service>> {
+        component "getHotelById()" as HS_get
+        component "isHotelOperational()" as HS_oper
+        component "isHotelFullyBooked()" as HS_fully
+        component "findHotelsInCity()" as HS_city
+        component "findTopRatedHotelsInCity()" as HS_top
+    }
+
+    package "AppUserService" <<Service>> {
+        component "getUserById()" as US_get
+        component "getUserStatus()" as US_status
+        component "isUserBlacklisted()" as US_black
+        component "isUserActive()" as US_active
+        component "isAuthorized()" as US_auth
+        component "isVipUser()" as US_vip
+    }
+
+    ' ========== РЕПОЗИТОРИИ ==========
+    package "ReviewRepository" <<Repository>> {
+        component "findByHotelId()" as RR_findByHotel
+    }
+
+    package "HotelRepository" <<Repository>> {
+        component "findById()" as HR_findById
+        component "findByCity()" as HR_findByCity
+        component "findTopByCity()" as HR_findTop
+        component "save()" as HR_save
+    }
+
+    package "AppUserRepository" <<Repository>> {
+        component "findById()" as UR_findById
+        component "findByStatus()" as UR_findByStatus
+        component "save()" as UR_save
+    }
+
+    package "PromoCodeRepository" <<Repository>> {
+        component "findByCode()" as PR_findByCode
+        component "save()" as PR_save
+    }
+}
+
+' ========== СВЯЗИ КОНТРОЛЛЕР → СЕРВИС/РЕПОЗИТОРИЙ ==========
+Rel(RC_get, RR_findByHotel, "вызывает напрямую")
+Rel(RC_trusted, RS_trusted, "вызывает")
+
+Rel(PC_get, PS_find, "вызывает")
+Rel(PC_valid, PS_valid, "вызывает")
+Rel(PC_validate, PS_validate, "вызывает")
+
+Rel(HC_get, HS_get, "вызывает")
+Rel(HC_oper, HS_oper, "вызывает")
+Rel(HC_fully, HS_fully, "вызывает")
+Rel(HC_city, HS_city, "вызывает")
+Rel(HC_top, HS_top, "вызывает")
+
+Rel(UC_get, US_get, "вызывает")
+Rel(UC_status, US_status, "вызывает")
+Rel(UC_black, US_black, "вызывает")
+Rel(UC_active, US_active, "вызывает")
+Rel(UC_auth, US_auth, "вызывает")
+Rel(UC_vip, US_vip, "вызывает")
+
+' ========== СВЯЗИ СЕРВИС → РЕПОЗИТОРИЙ ==========
+Rel(HS_get, HR_findById, "вызывает")
+Rel(HS_oper, HR_findById, "вызывает (для проверки operational)")
+Rel(HS_fully, HR_findById, "вызывает (для проверки fullyBooked)")
+Rel(HS_city, HR_findByCity, "вызывает")
+Rel(HS_top, HR_findTop, "вызывает")
+
+Rel(US_get, UR_findById, "вызывает")
+Rel(US_status, UR_findById, "вызывает")
+Rel(US_black, UR_findById, "вызывает")
+Rel(US_active, UR_findById, "вызывает")
+Rel(US_auth, UR_findById, "вызывает")
+Rel(US_vip, UR_findById, "вызывает")
+
+Rel(PS_find, PR_findByCode, "вызывает")
+Rel(PS_valid, PR_findByCode, "вызывает")
+Rel(PS_validate, PR_findByCode, "вызывает")
+
+' ========== ЗАВИСИМОСТИ МЕЖДУ СЕРВИСАМИ ==========
+' PromoCodeService зависит от AppUserService для проверки VIP
+Rel(PS_validate, US_vip, "вызывает (для проверки VIP-статуса)")
+
+' Также ReviewService может вызывать репозиторий для получения данных, но он вызывает только isTrustedHotel,
+' который, вероятно, использует ReviewRepository, но в коде это не показано. Для полноты добавим:
+Rel(RS_trusted, RR_findByHotel, "вызывает (для расчёта доверия)")
+
+@enduml

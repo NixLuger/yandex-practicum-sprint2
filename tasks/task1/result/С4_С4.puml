@@ -1,0 +1,137 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' Граница всего монолита
+System_Boundary(monolith, "Монолитное приложение (hotelio-monolith)") {
+
+    ' ========== КОНТРОЛЛЕРЫ ==========
+    package "BookingController" <<Controller>> {
+        component "listBookings()" as BC_list
+        component "createBooking()" as BC_create
+    }
+
+    package "ReviewController" <<Controller>> {
+        component "getReviewsForHotel()" as RC_get
+        component "isHotelTrusted()" as RC_trusted
+    }
+
+    package "PromoCodeController" <<Controller>> {
+        component "getPromoByCode()" as PC_get
+        component "isPromoValid()" as PC_valid
+        component "validatePromo()" as PC_validate
+    }
+
+    package "HotelController" <<Controller>> {
+        component "getHotelById()" as HC_get
+        component "isOperational()" as HC_oper
+        component "isFullyBooked()" as HC_fully
+        component "findByCity()" as HC_city
+        component "topRatedInCity()" as HC_top
+    }
+
+    package "AppUserController" <<Controller>> {
+        component "getUserById()" as UC_get
+        component "getUserStatus()" as UC_status
+        component "isUserBlacklisted()" as UC_black
+        component "isUserActive()" as UC_active
+        component "isUserAuthorized()" as UC_auth
+        component "isUserVip()" as UC_vip
+    }
+
+    ' ========== СЕРВИСЫ ==========
+    package "BookingService" <<Service>> {
+        component "listAll()" as BS_list
+        component "createBooking()" as BS_create
+        ' приватные методы (внутренние)
+        component "validateUser()" as BS_valUser
+        component "validateHotel()" as BS_valHotel
+        component "resolveBasePrice()" as BS_basePrice
+        component "resolvePromoDiscount()" as BS_promoDisc
+    }
+
+    package "ReviewService" <<Service>> {
+        component "isTrustedHotel()" as RS_trusted
+    }
+
+    package "PromoCodeService" <<Service>> {
+        component "findByCode()" as PS_find
+        component "isPromoValid()" as PS_valid
+        component "validate()" as PS_validate
+    }
+
+    package "HotelService" <<Service>> {
+        component "getHotelById()" as HS_get
+        component "isHotelOperational()" as HS_oper
+        component "isHotelFullyBooked()" as HS_fully
+        component "findHotelsInCity()" as HS_city
+        component "findTopRatedHotelsInCity()" as HS_top
+    }
+
+    package "AppUserService" <<Service>> {
+        component "getUserById()" as US_get
+        component "getUserStatus()" as US_status
+        component "isUserBlacklisted()" as US_black
+        component "isUserActive()" as US_active
+        component "isAuthorized()" as US_auth
+        component "isVipUser()" as US_vip
+    }
+
+    ' ========== РЕПОЗИТОРИИ ==========
+    package "BookingRepository" <<Repository>> {
+        component "save()" as BR_save
+        component "findByUserId()" as BR_findByUser
+        component "findAll()" as BR_findAll
+    }
+
+    package "ReviewRepository" <<Repository>> {
+        component "findByHotelId()" as RR_findByHotel
+    }
+}
+
+' ========== СВЯЗИ КОНТРОЛЛЕР → СЕРВИС/РЕПОЗИТОРИЙ ==========
+Rel(BC_list, BS_list, "вызывает")
+Rel(BC_create, BS_create, "вызывает")
+
+Rel(RC_get, RR_findByHotel, "вызывает напрямую")
+Rel(RC_trusted, RS_trusted, "вызывает")
+
+Rel(PC_get, PS_find, "вызывает")
+Rel(PC_valid, PS_valid, "вызывает")
+Rel(PC_validate, PS_validate, "вызывает")
+
+Rel(HC_get, HS_get, "вызывает")
+Rel(HC_oper, HS_oper, "вызывает")
+Rel(HC_fully, HS_fully, "вызывает")
+Rel(HC_city, HS_city, "вызывает")
+Rel(HC_top, HS_top, "вызывает")
+
+Rel(UC_get, US_get, "вызывает")
+Rel(UC_status, US_status, "вызывает")
+Rel(UC_black, US_black, "вызывает")
+Rel(UC_active, US_active, "вызывает")
+Rel(UC_auth, US_auth, "вызывает")
+Rel(UC_vip, US_vip, "вызывает")
+
+' ========== ВНУТРЕННИЕ ВЫЗОВЫ В BookingService ==========
+Rel(BS_create, BS_valUser, "вызывает")
+Rel(BS_create, BS_valHotel, "вызывает")
+Rel(BS_create, BS_basePrice, "вызывает")
+Rel(BS_create, BS_promoDisc, "вызывает")
+
+' ========== ВЫЗОВЫ BookingService → ДРУГИЕ СЕРВИСЫ И РЕПОЗИТОРИЙ ==========
+Rel(BS_list, BR_findByUser, "вызывает при userId != null")
+Rel(BS_list, BR_findAll, "вызывает при userId == null")
+
+Rel(BS_valUser, US_active, "вызывает")
+Rel(BS_valUser, US_black, "вызывает")
+Rel(BS_basePrice, US_status, "вызывает")
+
+Rel(BS_valHotel, HS_oper, "вызывает")
+Rel(BS_valHotel, HS_fully, "вызывает")
+Rel(BS_valHotel, RS_trusted, "вызывает")
+
+Rel(BS_promoDisc, PS_validate, "вызывает")
+
+Rel(BS_create, BR_save, "вызывает")
+
+@enduml

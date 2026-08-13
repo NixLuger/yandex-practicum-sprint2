@@ -1,0 +1,38 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+' ---- Внешний пользователь ----
+Person(user, "Пользователь", "Взаимодействует через фронтенд")
+
+' ---- API Gateway ----
+Container(gateway, "API Gateway", "Kong", "Единая точка входа, маршрутизация, балансировка, аутентификация")
+
+' ---- Контейнер 1: Остаток монолита ----
+System_Boundary(monolith, "Hotelio (монолит)") {
+    Container(monolithApp, "Монолитное приложение", "Spring Boot", "Обрабатывает запросы к отелям, пользователям, промокодам, отзывам")
+    ContainerDb(monolithDb, "Monolith DB", "PostgreSQL", "Хранит отели, пользователей, промокоды, отзывы")
+}
+
+' ---- Контейнер 2: Микросервис бронирований ----
+System_Boundary(bookingMs, "Booking Microservice") {
+    Container(bookingApp, "Booking Service", "Spring Boot", "Управляет бронированиями")
+    ContainerDb(bookingDb, "Booking DB", "PostgreSQL", "Хранит бронирования (Booking)")
+}
+
+' ---- Связи с пользователем ----
+Rel(user, gateway, "Использует", "HTTPS")
+
+' ---- Связи от API Gateway к контейнерам ----
+Rel(gateway, monolithApp, "Маршрутизирует", "/api/hotels, /api/users, /api/promos, /api/reviews")
+Rel(gateway, bookingApp, "Маршрутизирует", "/api/bookings")
+
+' ---- Связи внутри монолита ----
+Rel(monolithApp, monolithDb, "Читает/пишет", "Данные отелей, пользователей, промокодов, отзывов")
+
+' ---- Связи внутри микросервиса ----
+Rel(bookingApp, bookingDb, "Читает/пишет", "Бронирования")
+
+' ---- Взаимодействие между контейнерами (микросервис → монолит) ----
+Rel(bookingApp, monolithApp, "Вызывает (REST)", "Проверка пользователя (активность, чёрный список, статус),\nпроверка отеля (работоспособность, заполненность),\nпроверка отзывов (доверие),\nвалидация промокода")
+
+@enduml
