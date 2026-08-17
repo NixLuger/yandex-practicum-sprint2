@@ -17,7 +17,7 @@ public class BookingEventProducer {
     private final String topic;
 
     public BookingEventProducer(KafkaTemplate<String, BookingEvent> kafkaTemplate,
-                                @Value("${kafka.topic.booking-events}") String topic) {
+                                @Value("${spring.kafka.topic.booking-events}") String topic) {
         this.kafkaTemplate = kafkaTemplate;
         this.topic = topic;
     }

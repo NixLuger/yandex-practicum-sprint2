@@ -82,15 +82,14 @@ public class GrpcBookingService extends BookingServiceGrpc.BookingServiceImplBas
 
             log.info("Final price calculated: base={}, discount={}, final={}", basePrice, discount, finalPrice);
 
-            Booking booking = new Booking(
-                    UUID.randomUUID().toString(),
-                    request.getUserId(),
-                    request.getHotelId(),
-                    request.getPromoCode().isBlank() ? null : request.getPromoCode(),
-                    discount,
-                    finalPrice,
-                    Instant.now()
-            );
+            Booking booking = Booking.builder()
+                    .userId(request.getUserId())
+                    .hotelId(request.getHotelId())
+                    .promoCode(request.getPromoCode().isBlank() ? null : request.getPromoCode())
+                    .discountPercent(discount)
+                    .price(finalPrice)
+                    .createdAt(Instant.now())
+                    .build();
 
             bookingRepository.save(booking);
             log.info("Booking saved with id: {}", booking.getId());
@@ -172,7 +171,7 @@ public class GrpcBookingService extends BookingServiceGrpc.BookingServiceImplBas
 
     private BookingResponse toBookingResponse(Booking booking) {
         return BookingResponse.newBuilder()
-                .setId(booking.getId())
+                .setId(booking.getId().toString())
                 .setUserId(booking.getUserId())
                 .setHotelId(booking.getHotelId())
                 .setPromoCode(booking.getPromoCode() != null ? booking.getPromoCode() : "")

@@ -18,9 +18,8 @@ public class BookingEventConsumer {
     }
 
     @KafkaListener(
-            topics = "${kafka.topic.booking-events}",
-            groupId = "${spring.kafka.consumer.group-id}",
-            containerFactory = "bookingEventKafkaListenerContainerFactory"
+            topics = "${spring.kafka.topic.booking-events}",
+            groupId = "${spring.kafka.consumer.group-id}"
     )
     public void consumeBookingEvent(BookingEvent event) {
         log.info("Received booking event: id={}, userId={}", event.getId(), event.getUserId());

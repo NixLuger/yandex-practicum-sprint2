@@ -27,7 +27,7 @@ services:
     networks:
       - hotelio-net
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://booking-service-db:5433/booking-service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://booking-service-db:5432/booking-service
       SPRING_DATASOURCE_USERNAME: hotelio
       SPRING_DATASOURCE_PASSWORD: hotelio
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092
@@ -44,7 +44,7 @@ services:
     networks:
       - hotelio-net
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://booking-history-service-db:5434/booking-history-service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://booking-history-service-db:5432/booking-history-service
       SPRING_DATASOURCE_USERNAME: hotelio
       SPRING_DATASOURCE_PASSWORD: hotelio
       KAFKA_BOOTSTRAP_SERVERS: kafka:9092

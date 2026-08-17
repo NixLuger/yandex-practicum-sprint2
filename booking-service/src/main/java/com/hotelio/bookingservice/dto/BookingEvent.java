@@ -10,7 +10,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingEvent {
-    private String id;
+    private Long id;
     private String userId;
     private String hotelId;
     private String promoCode;
