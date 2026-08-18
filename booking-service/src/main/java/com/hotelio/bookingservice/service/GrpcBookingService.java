@@ -64,7 +64,7 @@ public class GrpcBookingService extends BookingServiceGrpc.BookingServiceImplBas
     @Override
     public void createBooking(BookingRequest request, StreamObserver<BookingResponse> responseObserver) {
         try {
-            if (request.getUserId().isBlank() || request.getHotelId().isBlank() || request.getPromoCode().isBlank()) {
+            if (request.getUserId().isBlank() || request.getHotelId().isBlank()) {
                 responseObserver.onError(Status.INVALID_ARGUMENT
                         .withDescription("promoCode, userId and hotelId are required")
                         .asRuntimeException());
@@ -157,7 +157,7 @@ public class GrpcBookingService extends BookingServiceGrpc.BookingServiceImplBas
     }
 
     private double resolvePromoDiscount(String promoCode, String userId) {
-        if (promoCode == null) return 0.0;
+        if (promoCode == null || promoCode.isBlank()) return 0.0;
 
         PromoCode promo = monolithClient.validatePromoCode(promoCode, userId);
         if (promo == null) {

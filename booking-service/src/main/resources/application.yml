@@ -21,7 +21,7 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.trusted.packages: "*"
-        spring.json.type.mapping: booking-event:com.hotelio.bookingservice.event.BookingEvent
+        spring.json.type.mapping: booking-event:com.hotelio.bookingservice.dto.BookingEvent
 
 monolith:
   api:

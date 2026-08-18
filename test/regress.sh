@@ -3,14 +3,20 @@ set -euo pipefail
 
 echo "🏁 Регрессионный тест до миграции Hotelio"
 
-# Проверка соединения
-echo "🧪 Проверка подключения к БД..."
+# Проверка соединения с монолитом
+echo "🧪 Проверка подключения к БД монолита..."
 timeout 2 bash -c "</dev/tcp/${DB_HOST}/${DB_PORT}" \
   || { echo "❌ Не удалось подключиться к ${DB_HOST}:${DB_PORT}"; exit 1; }
+
+# Проверка соединения с сервисом
+echo "🧪 Проверка подключения к БД сервиса бронирования..."
+timeout 2 bash -c "</dev/tcp/${DB_HOST}/${DB_PORT_BS}" \
+  || { echo "❌ Не удалось подключиться к ${DB_HOST}:${DB_PORT_BS}"; exit 1; }
 
 # Загрузка фикстур
 echo "🧪 Загрузка фикстур..."
 PGPASSWORD="${DB_PASSWORD}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" "${DB_NAME}" < init-fixtures.sql
+PGPASSWORD="${DB_PASSWORD}" psql -h "${DB_HOST}" -p "${DB_PORT_BS}" -U "${DB_USER}" "${DB_NAME_BS}" < init-fixtures-bs.sql
 
 echo "🧪 Выполнение HTTP-тестов..."
 

@@ -57,7 +57,7 @@ public class MonolithRestClient {
     public boolean isTrustedHotel(String hotelId) {
         try {
             return Boolean.TRUE.equals(webClient.get()
-                    .uri("/api/reviews/hotels/{hotelId}/trusted", hotelId)
+                    .uri("/api/reviews/hotel/{hotelId}/trusted", hotelId)
                     .retrieve()
                     .bodyToMono(Boolean.class)
                     .block());
@@ -93,7 +93,7 @@ public class MonolithRestClient {
 
     public PromoCode validatePromoCode(String promoCode, String userId) {
         try {
-            return webClient.get()
+            return webClient.post()
                     .uri(uriBuilder -> uriBuilder
                             .path("/api/promos/validate")
                             .queryParam("code", promoCode)
