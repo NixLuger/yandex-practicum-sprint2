@@ -34,7 +34,8 @@ const resolvers = {
 
           try {
             const response = await listBookings({ userId });
-            return response.getBookings().map((grpcBooking) => ({
+            console.log(response);
+            return response.getBookingsList().map((grpcBooking) => ({
               id: grpcBooking.getId(),
               userId: grpcBooking.getUserId(),
               hotelId: grpcBooking.getHotelId(),
