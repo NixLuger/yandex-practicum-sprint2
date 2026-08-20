@@ -1,6 +1,5 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-import { ApolloGateway } from '@apollo/gateway';
 import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { IntrospectAndCompose } from '@apollo/gateway';
 
