@@ -5,6 +5,10 @@ import { listBookings } from './grpcClient.js';
 import gql from 'graphql-tag';
 
 const typeDefs = gql`
+  type Hotel @key(fields: "id") {
+    id: ID!
+  }
+
   type Booking @key(fields: "id") {
     id: ID!
     userId: String!
