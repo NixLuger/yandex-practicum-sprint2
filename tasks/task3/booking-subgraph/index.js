@@ -1,6 +1,7 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { buildSubgraphSchema } from '@apollo/subgraph';
+import { listBookings } from './grpcClient.js';
 import gql from 'graphql-tag';
 
 const typeDefs = gql`
@@ -8,6 +9,7 @@ const typeDefs = gql`
     id: ID!
     userId: String!
     hotelId: String!
+    hotel: Hotel
     promoCode: String
     discountPercent: Int
   }
@@ -19,14 +21,37 @@ const typeDefs = gql`
 `;
 
 const resolvers = {
-  Query: {
-    bookingsByUser: async (_, { userId }, { req }) => {
-		// TODO: Реальный вызов к grpc booking-сервису или заглушка + ACL
+    Query: {
+        bookingsByUser: async (_, { userId }, { userIdFromHeader }) => {
+          if (!userIdFromHeader)
+            throw new Error('Unauthorized: missing userid header');
+          if (userIdFromHeader !== userId)
+            throw new Error('Forbidden: you can only view your own bookings');
+
+          try {
+            const response = await listBookings({ userId });
+            return response.getBookingsList().map((grpcBooking) => ({
+              id: grpcBooking.getId(),
+              userId: grpcBooking.getUserId(),
+              hotelId: grpcBooking.getHotelId(),
+              promoCode: grpcBooking.getPromoCode(),
+              discountPercent: grpcBooking.getDiscountPercent(),
+            }));
+          } catch (err) {
+            console.error('gRPC error:', err);
+            throw new Error('Failed to fetch bookings from gRPC service');
+          }
+        },
     },
-  },
   Booking: {
-	  // TODO: Реальный вызов к grpc booking-сервису или заглушка + ACL
-  },
+
+    // указываю поле, которое является ключём для разрешения hotel через тип Hotel
+    hotel: (parent) => ({__typename: 'Hotel', id: parent.hotelId}),
+
+    // тут не делаю запрос к api т.к. в задании небыло необходимости резолвить букинги, да и сервис на это не заточен ещё
+    __resolveReference: async (reference) => { return { id: reference.id }}
+  }
+
 };
 
 const server = new ApolloServer({
@@ -35,7 +60,10 @@ const server = new ApolloServer({
 
 startStandaloneServer(server, {
   listen: { port: 4001 },
-  context: async ({ req }) => ({ req }),
+    context: async ({ req }) => {
+      const userIdFromHeader = req.headers['userid'] || null; // авторизация на основании простой строки в хидере запроса (по заданию)
+      return { userIdFromHeader };
+    },
 }).then(() => {
   console.log('✅ Booking subgraph ready at http://localhost:4001/');
 });
