@@ -35,7 +35,7 @@ const resolvers = {
           try {
             const response = await listBookings({ userId });
             console.log(response);
-            return response.bookings.map((booking) => ({
+            return response.getBookingsList().map((booking) => ({
               id: booking.getId(),
               userId: booking.getUserId(),
               hotelId: booking.getHotelId(),

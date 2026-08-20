@@ -13,6 +13,7 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   enums: String,
   defaults: true,
   oneofs: true,
+  objects: false
 });
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
 const bookingProto = protoDescriptor.booking;
