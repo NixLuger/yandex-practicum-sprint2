@@ -20,4 +20,4 @@ const client = new bookingProto.BookingService(BOOKING_SERVICE_GRPC_SOCKET, grpc
 const { promisify } = require('util');
 const listBookings = promisify(client.listBookings).bind(client);
 
-module.exports = { listBookings };
+export { listBookings };
