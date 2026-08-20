@@ -35,12 +35,12 @@ const resolvers = {
           try {
             const response = await listBookings({ userId });
             console.log(response);
-            return response.getBookingsList().map((grpcBooking) => ({
-              id: grpcBooking.getId(),
-              userId: grpcBooking.getUserId(),
-              hotelId: grpcBooking.getHotelId(),
-              promoCode: grpcBooking.getPromoCode(),
-              discountPercent: grpcBooking.getDiscountPercent(),
+            return response.bookings.map((booking) => ({
+              id: booking.getId(),
+              userId: booking.getUserId(),
+              hotelId: booking.getHotelId(),
+              promoCode: booking.getPromoCode(),
+              discountPercent: booking.getDiscountPercent(),
             }));
           } catch (err) {
             console.error('gRPC error:', err);
