@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const BOOKING_SERVICE_GRPC_SOCKET = process.env.BOOKING_SERVICE_GRPC_SOCKET || 'booking-service:9090';
-
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PROTO_PATH = path.join(__dirname, 'booking.proto');
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
