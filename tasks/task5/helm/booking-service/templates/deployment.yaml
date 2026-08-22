@@ -1,18 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ include "booking-service.fullname" . }}
   labels:
-    app: {{ .Release.Name }}
+    app: {{ include "booking-service.name" . }}
+    version: {{ .Values.version | default "v1" }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}
+      app: {{ include "booking-service.name" . }}
+      version: {{ .Values.version | default "v1" }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}
+        app: {{ include "booking-service.name" . }}
+        version: {{ .Values.version | default "v1" }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
