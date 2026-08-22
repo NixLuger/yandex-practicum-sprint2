@@ -147,3 +147,32 @@ deploy finished in 8.09 s
 
  PASS  deploy
 deploy environment: { name: staging }
+
+nix@yandex:~/yandex-practicum-sprint2/tasks/task4$ gitlab-ci-local tag
+Using fallback git user.email
+  Command failed with exit code 1: git config user.email
+Using fallback git user.name
+  Command failed with exit code 1: git config user.name
+parsing and downloads finished in 42 ms.
+json schema validated in 164 ms
+tag starting shell (tag)
+tag $ echo "Creating git tag..."
+tag > Creating git tag...
+tag $ git tag "deploy-$(date +%Y%m%d%H%M%S)"
+tag $ git push --tags
+tag > still running...
+tag > still running...
+tag > remote: warning: See https://gh.io/lfs for more information.
+tag > remote: warning: File 62243a68253ed1b11a4020fdae58920b0f5ef7d0 is 60.94 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+tag > remote: warning: File 6a9203585dde0e5a92a2618a719a2cd233f61045 is 60.94 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+tag > remote: warning: File 8dd9145182580ee250458eaa52d60e07e9da646f is 83.77 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+tag > remote: warning: File 3c1e278d5194a4efa641536e7f87241f5e320094 is 58.67 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+tag > remote: warning: File 366afbdfe94a38f0813e77767c777f62cf6ec9c9 is 83.77 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+tag > remote: warning: File 05fc12ab3c3b314ce07922d7ec600cb0b8070633 is 83.77 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+tag > remote: warning: File 0f67f5be61b9a32b1cfd33fb103bd0ae6d7b9cf9 is 58.67 MB; this is larger than GitHub's recommended maximum file size of 50.00 MB
+tag > remote: warning: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+tag > To github.com:NixLuger/yandex-practicum-sprint2.git
+tag >  * [new tag]         deploy-20260822231733 -> deploy-20260822231733
+tag finished in 29 s
+
+ PASS  tag
