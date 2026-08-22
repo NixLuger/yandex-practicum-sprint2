@@ -2,22 +2,50 @@ stages:
   - build
   - test
   - deploy
+  - tag
 
 variables:
-  IMAGE_TAG: latest
   IMAGE_NAME: booking-service
+  IMAGE_TAG: latest
 
 build:
   stage: build
   script:
-
+    - echo "Building Docker image..."
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG ./booking-service
+  artifacts:
+    paths:
+      - ./booking-service/Dockerfile
 
 test:
   stage: test
   script:
-
+    - echo "Starting container for test..."
+    - docker run -d -p 8080:8080 --name test-srv $IMAGE_NAME:$IMAGE_TAG
+    - sleep 3
+    - echo "Testing /ping endpoint..."
+    - curl --fail http://localhost:8080/ping || (docker logs test-srv && exit 1)
+    - echo "Test passed. Stopping container."
+    - docker stop test-srv && docker rm test-srv
 
 deploy:
   stage: deploy
   script:
- 
+    - echo "Loading image into Minikube..."
+    - minikube image load $IMAGE_NAME:$IMAGE_TAG
+    - echo "Upgrading Helm release with staging values..."
+    - helm upgrade --install booking-service ./helm/booking-service
+      --values ./values-staging.yaml
+      --set image.tag=$IMAGE_TAG
+  environment:
+    name: staging
+
+tag:
+  stage: tag
+  script:
+    - echo "Creating git tag..."
+    - git tag "deploy-$(date +%Y%m%d%H%M%S)"
+    - git push --tags
+  only:
+    - main
+  when: manual
