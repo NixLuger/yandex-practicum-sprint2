@@ -35,7 +35,7 @@ deploy:
     - minikube image load $IMAGE_NAME:$IMAGE_TAG
     - echo "Upgrading Helm release with staging values..."
     - helm upgrade --install booking-service ./helm/booking-service
-      --values ./values-staging.yaml
+      --values ./result/values-staging.yaml
       --set image.tag=$IMAGE_TAG
   environment:
     name: staging
