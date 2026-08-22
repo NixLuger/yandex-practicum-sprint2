@@ -1,0 +1,149 @@
+nix@yandex:~/yandex-practicum-sprint2/tasks/task4$ gitlab-ci-local build test deploy
+Using fallback git user.email
+  Command failed with exit code 1: git config user.email
+Using fallback git user.name
+  Command failed with exit code 1: git config user.name
+parsing and downloads finished in 45 ms.
+json schema validated in 164 ms
+build  starting shell (build)
+build  $ echo "Building Docker image..."
+build  > Building Docker image...
+build  $ docker build -t $IMAGE_NAME:$IMAGE_TAG ./booking-service
+build  > DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+build  >             Install the buildx component to build images with BuildKit:
+build  >             https://docs.docker.com/go/buildx/
+build  >
+build  > Sending build context to Docker daemon   5.12kB
+build  > Step 1/8 : FROM golang:1.21-alpine
+build  > 1.21-alpine: Pulling from library/golang
+build  > c6a83fedfae6: Pulling fs layer
+build  > 4f4fb700ef54: Pulling fs layer
+build  > 4579008f8500: Pulling fs layer
+build  > 41db7493d1c6: Pulling fs layer
+build  > 54bf7053e2d9: Pulling fs layer
+build  > 4f4fb700ef54: Download complete
+build  > 4579008f8500: Download complete
+build  > 41db7493d1c6: Download complete
+build  > c6a83fedfae6: Download complete
+build  > c6a83fedfae6: Pull complete
+build  > 41db7493d1c6: Pull complete
+build  > b0059cac77ec: Download complete
+build  > b3f3effce7f5: Download complete
+build  > 54bf7053e2d9: Download complete
+build  > 4579008f8500: Pull complete
+build  > 54bf7053e2d9: Pull complete
+build  > 4f4fb700ef54: Pull complete
+build  > Digest: sha256:2414035b086e3c42b99654c8b26e6f5b1b1598080d65fd03c7f499552ff4dc94
+build  > Status: Downloaded newer image for golang:1.21-alpine
+build  >  ---> 2414035b086e
+build  > Step 2/8 : RUN apk add --no-cache curl
+build  >  ---> Running in b17341485237
+build  > fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/main/x86_64/APKINDEX.tar.gz
+build  > fetch https://dl-cdn.alpinelinux.org/alpine/v3.20/community/x86_64/APKINDEX.tar.gz
+build  > (1/9) Installing brotli-libs (1.1.0-r2)
+build  > (2/9) Installing c-ares (1.33.1-r0)
+build  > (3/9) Installing libunistring (1.2-r0)
+build  > (4/9) Installing libidn2 (2.3.7-r0)
+build  > (5/9) Installing nghttp2-libs (1.62.1-r0)
+build  > (6/9) Installing libpsl (0.21.5-r1)
+build  > (7/9) Installing zstd-libs (1.5.6-r0)
+build  > (8/9) Installing libcurl (8.14.1-r2)
+build  > (9/9) Installing curl (8.14.1-r2)
+build  > Executing busybox-1.36.1-r29.trigger
+build  > OK: 13 MiB in 24 packages
+build  >  ---> Removed intermediate container b17341485237
+build  >  ---> 7854e8e8ac6a
+build  > Step 3/8 : WORKDIR /app
+build  >  ---> Running in 659ff017a183
+build  >  ---> Removed intermediate container 659ff017a183
+build  >  ---> bfc5edcc36b6
+build  > Step 4/8 : COPY main.go .
+build  >  ---> cfe17115a79a
+build  > Step 5/8 : COPY check-dns.sh .
+build  >  ---> 0e601b400f5f
+build  > Step 6/8 : RUN chmod +x check-dns.sh
+build  >  ---> Running in bf6c9c2120b6
+build  >  ---> Removed intermediate container bf6c9c2120b6
+build  >  ---> d8e9d9007b52
+build  > Step 7/8 : RUN go build -o booking-service main.go
+build  >  ---> Running in 241d81923ad4
+build  >  ---> Removed intermediate container 241d81923ad4
+build  >  ---> f28d00a9a77e
+build  > Step 8/8 : CMD ["./booking-service"]
+build  >  ---> Running in b92d3252e486
+build  >  ---> Removed intermediate container b92d3252e486
+build  >  ---> 9a1baeac8e12
+build  > Successfully built 9a1baeac8e12
+build  > Successfully tagged booking-service:latest
+build  finished in 23 s
+build  exported artifacts in 61 ms
+test   starting shell (test)
+test   $ echo "Starting container for test..."
+test   > Starting container for test...
+test   $ docker run -d -p 8080:8080 --name test-srv $IMAGE_NAME:$IMAGE_TAG
+test   > 9fd2a57752df9f4a0bad22087193189a006c6d922158096bb53bba64ec742164
+test   $ sleep 3
+test   $ echo "Testing /ping endpoint..."
+test   > Testing /ping endpoint...
+test   $ curl --fail http://localhost:8080/ping || (docker logs test-srv && exit 1)
+test   >   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+test   >                                  Dload  Upload   Total   Spent    Left  Speed
+100     4  100     4    0     0   1164      0 --:--:-- --:--:-- --:--:--  1333
+test   > pong<gclShellPromptPlaceholder> echo "Test passed. Stopping container."
+test   > Test passed. Stopping container.
+test   $ docker stop test-srv && docker rm test-srv
+test   > test-srv
+test   > test-srv
+test   finished in 3.63 s
+deploy starting shell (deploy)
+deploy $ echo "Loading image into Minikube..."
+deploy > Loading image into Minikube...
+deploy $ minikube image load $IMAGE_NAME:$IMAGE_TAG
+deploy $ echo "Upgrading Helm release with staging values..."
+deploy > Upgrading Helm release with staging values...
+deploy $ helm upgrade --install booking-service ./helm/booking-service --values ./values-staging.yaml --set image.tag=$IMAGE_TAG
+deploy > Release "booking-service" does not exist. Installing it now.
+deploy > Error: open ./values-staging.yaml: no such file or directory
+deploy finished in 7.85 s  FAIL 1
+
+ PASS  build
+ PASS  test
+ FAIL  deploy
+  > Upgrading Helm release with staging values...
+  > Release "booking-service" does not exist. Installing it now.
+  > Error: open ./values-staging.yaml: no such file or directory
+
+//---------------------------------------------------------------------------------
+// В GITLAB.YML ВВЁЛ НЕВЕРНЫЙ ПУТЬ К VALUES-STAGING.YML. ПОПРАВИЛ И ПЕРЕДИПЛОИЛ
+//---------------------------------------------------------------------------------
+
+nix@yandex:~/yandex-practicum-sprint2/tasks/task4$ gitlab-ci-local deploy
+Using fallback git user.email
+  Command failed with exit code 1: git config user.email
+Using fallback git user.name
+  Command failed with exit code 1: git config user.name
+parsing and downloads finished in 51 ms.
+json schema validated in 168 ms
+deploy starting shell (deploy)
+deploy $ echo "Loading image into Minikube..."
+deploy > Loading image into Minikube...
+deploy $ minikube image load $IMAGE_NAME:$IMAGE_TAG
+deploy $ echo "Upgrading Helm release with staging values..."
+deploy > Upgrading Helm release with staging values...
+deploy $ helm upgrade --install booking-service ./helm/booking-service --values ./result/values-staging.yaml --set image.tag=$IMAGE_TAG
+deploy > Release "booking-service" does not exist. Installing it now.
+deploy > I0822 22:51:28.420935  111294 warnings.go:107] "Warning: unknown field \"spec.template.spec.containers[0].httpGet\""
+deploy > I0822 22:51:28.420972  111294 warnings.go:107] "Warning: unknown field \"spec.template.spec.containers[0].initialDelaySeconds\""
+deploy > I0822 22:51:28.420979  111294 warnings.go:107] "Warning: unknown field \"spec.template.spec.containers[0].limits\""
+deploy > I0822 22:51:28.420983  111294 warnings.go:107] "Warning: unknown field \"spec.template.spec.containers[0].periodSeconds\""
+deploy > I0822 22:51:28.420987  111294 warnings.go:107] "Warning: unknown field \"spec.template.spec.containers[0].requests\""
+deploy > NAME: booking-service
+deploy > LAST DEPLOYED: Sat Aug 22 22:51:28 2026
+deploy > NAMESPACE: default
+deploy > STATUS: deployed
+deploy > REVISION: 1
+deploy > TEST SUITE: None
+deploy finished in 8.09 s
+
+ PASS  deploy
+deploy environment: { name: staging }
