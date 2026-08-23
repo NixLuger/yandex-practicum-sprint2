@@ -20,8 +20,8 @@ spec:
         - destination:
             host: booking-service
             subset: v1
-          weight: 100
+          weight: 90
         - destination:
             host: booking-service
             subset: v2
-          weight: 0
+          weight: 10
