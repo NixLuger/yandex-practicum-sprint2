@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: booking-service
+spec:
+  hosts:
+    - booking-service
+  http:
+    # 1. Feature flag: если заголовок есть, весь трафик на v2
+    - match:
+        - headers:
+            X-Feature-Enabled:
+              exact: "true"
+      route:
+        - destination:
+            host: booking-service
+            subset: v2
+          weight: 100
+    - route:
+        - destination:
+            host: booking-service
+            subset: v1
+          weight: 90
+        - destination:
+            host: booking-service
+            subset: v2
+          weight: 10
+      retries:
+        attempts: 2
+        perTryTimeout: 1s
+        retryOn: 5xx,gateway-error,connect-failure
+        timeout: 2s
