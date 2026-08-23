@@ -1,0 +1,145 @@
+root@yandex:/home/nix/yandex-practicum-sprint2/tasks/task3# docker-compose up -d --build
+Building booking-subgraph
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  9.728kB
+Step 1/6 : FROM node:18
+ ---> c6ae79e38498
+Step 2/6 : WORKDIR /app
+ ---> Running in 1de5b44e3614
+ ---> Removed intermediate container 1de5b44e3614
+ ---> 696877bf385a
+Step 3/6 : COPY package.json ./
+ ---> 722d519988ac
+Step 4/6 : RUN npm install
+ ---> Running in 1133e5d50a06
+npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+npm warn deprecated @apollo/server-gateway-interface@1.1.1: @apollo/server-gateway-interface v1 is part of Apollo Server v4, which is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v2 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+npm warn deprecated @apollo/server@4.13.0: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+
+added 186 packages, and audited 187 packages in 10s
+
+32 packages are looking for funding
+  run `npm fund` for details
+
+4 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+ ---> Removed intermediate container 1133e5d50a06
+ ---> 1e2f7b75cf5e
+Step 5/6 : COPY . .
+ ---> 8f8cc3ef7190
+Step 6/6 : CMD ["node", "index.js"]
+ ---> Running in 44537df12980
+ ---> Removed intermediate container 44537df12980
+ ---> 97170c51d774
+Successfully built 97170c51d774
+Successfully tagged task3_booking-subgraph:latest
+Building hotel-subgraph
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  6.144kB
+Step 1/6 : FROM node:18
+ ---> c6ae79e38498
+Step 2/6 : WORKDIR /app
+ ---> Using cache
+ ---> 696877bf385a
+Step 3/6 : COPY package.json ./
+ ---> 9f961920ff78
+Step 4/6 : RUN npm install
+ ---> Running in 546b849bd387
+npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+npm warn deprecated @apollo/server-gateway-interface@1.1.1: @apollo/server-gateway-interface v1 is part of Apollo Server v4, which is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v2 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+npm warn deprecated @apollo/server@4.13.0: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+
+added 173 packages, and audited 174 packages in 7s
+
+31 packages are looking for funding
+  run `npm fund` for details
+
+4 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+ ---> Removed intermediate container 546b849bd387
+ ---> d881acd92501
+Step 5/6 : COPY . .
+ ---> 3904d3686052
+Step 6/6 : CMD ["node", "index.js"]
+ ---> Running in 8d8b35ef735e
+ ---> Removed intermediate container 8d8b35ef735e
+ ---> a7d9d30a1e80
+Successfully built a7d9d30a1e80
+Successfully tagged task3_hotel-subgraph:latest
+Building apollo-gateway
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon   5.12kB
+Step 1/6 : FROM node:18
+ ---> c6ae79e38498
+Step 2/6 : WORKDIR /app
+ ---> Using cache
+ ---> 696877bf385a
+Step 3/6 : COPY package.json ./
+ ---> 24a182f9131a
+Step 4/6 : RUN npm install
+ ---> Running in 319a8bab2bc2
+npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+npm warn deprecated uuid@9.0.1: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+npm warn deprecated @apollo/server-gateway-interface@1.1.1: @apollo/server-gateway-interface v1 is part of Apollo Server v4, which is deprecated and will transition to end-of-life on January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v2 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+npm warn deprecated @apollo/server@4.13.0: Apollo Server v4 is end-of-life since January 26, 2026. As long as you are already using a non-EOL version of Node.js, upgrading to v5 should take only a few minutes. See https://www.apollographql.com/docs/apollo-server/previous-versions for details.
+
+added 333 packages, and audited 334 packages in 13s
+
+73 packages are looking for funding
+  run `npm fund` for details
+
+23 vulnerabilities (20 moderate, 2 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+ ---> Removed intermediate container 319a8bab2bc2
+ ---> 08b351dcb35e
+Step 5/6 : COPY . .
+ ---> 6e00d845fd88
+Step 6/6 : CMD ["node", "index.js"]
+ ---> Running in 8ee7e4bdacba
+ ---> Removed intermediate container 8ee7e4bdacba
+ ---> 6da366b9f747
+Successfully built 6da366b9f747
+Successfully tagged task3_apollo-gateway:latest
+Creating task3_hotel-subgraph_1   ... done
+Creating task3_booking-subgraph_1 ... done
+Creating task3_apollo-gateway_1   ... done
