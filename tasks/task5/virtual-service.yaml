@@ -35,4 +35,4 @@ spec:
         attempts: 3
         perTryTimeout: 2s
         retryOn: 5xx,gateway-error,connect-failure
-      timeout: 2s
+        timeout: 2s
