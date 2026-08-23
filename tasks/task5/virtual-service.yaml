@@ -6,6 +6,17 @@ spec:
   hosts:
     - booking-service
   http:
+    # 1. Feature flag: если заголовок есть, весь трафик на v2
+    - match:
+        - headers:
+            X-Feature-Enabled:
+              exact: "true"
+      route:
+        - destination:
+            host: booking-service
+            subset: v2
+          weight: 100
+    # 2. Canary release для остального трафика
     - route:
         - destination:
             host: booking-service
@@ -20,12 +31,3 @@ spec:
         perTryTimeout: 2s
         retryOn: 5xx
       timeout: 5s
-    - match:
-        - headers:
-            X-Feature-Enabled:
-              exact: "true"
-      route:
-        - destination:
-            host: booking-service
-            subset: v2
-          weight: 100
