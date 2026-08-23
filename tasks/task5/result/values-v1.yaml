@@ -7,6 +7,8 @@ image:
 env:
   - name: ENABLE_FEATURE_X
     value: "false"
+  - name: VERSION
+    value: "v1"
 resources:
   requests:
     memory: "64Mi"

@@ -8,17 +8,21 @@ import (
 )
 
 func main() {
+    version := os.Getenv("VERSION")
+	if version == "" {
+		version = "default"
+	}
 	enableFeatureX := os.Getenv("ENABLE_FEATURE_X") == "true"
 
 	http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "pong")
+		fmt.Fprintf(w, "pong (v%s) ", version)
 	})
 
 	// TODO: Feature flag route
 	// if ENABLE_FEATURE_X=true, expose /feature
 	if enableFeatureX {
 		http.HandleFunc("/feature", func(w http.ResponseWriter, r *http.Request) {
-			fmt.Fprintf(w, "Feature X is enabled!")
+			fmt.Fprintf(w, "Feature X is enabled! (v%s) ", version)
 		})
 	}
 
