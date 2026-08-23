@@ -16,11 +16,6 @@ spec:
             host: booking-service
             subset: v2
           weight: 100
-      retries:
-        attempts: 1
-        perTryTimeout: 1s
-        retryOn: 5xx,gateway-error,connect-failure
-    # 2. Canary release для остального трафика
     - route:
         - destination:
             host: booking-service
@@ -30,7 +25,3 @@ spec:
             host: booking-service
             subset: v2
           weight: 10
-      retries:
-        attempts: 1
-        perTryTimeout: 1s
-        retryOn: 5xx,gateway-error,connect-failure
