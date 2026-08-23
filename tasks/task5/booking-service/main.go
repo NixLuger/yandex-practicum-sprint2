@@ -26,6 +26,6 @@ func main() {
 		})
 	}
 
-	log.Println("Server running on :8080")
+	log.Fprintf("Server running on :8080 (version=%s)", version)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
