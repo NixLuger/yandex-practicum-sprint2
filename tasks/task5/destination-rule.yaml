@@ -14,8 +14,6 @@ spec:
   trafficPolicy:
     outlierDetection:
       consecutive5xxErrors: 1
-      consecutiveGatewayErrors: 1
-      consecutiveLocalOriginFailures: 1
       interval: 1s
       baseEjectionTime: 30s
     connectionPool:
