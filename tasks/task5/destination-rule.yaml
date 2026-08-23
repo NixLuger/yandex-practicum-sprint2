@@ -12,13 +12,6 @@ spec:
       labels:
         version: v2
   trafficPolicy:
-    loadBalancer:
-      simple: ROUND_ROBIN
-    failover:
-      - from:
-          subset: v1
-        to:
-          subset: v2
     outlierDetection:
       consecutive5xxErrors: 1
       interval: 1s
